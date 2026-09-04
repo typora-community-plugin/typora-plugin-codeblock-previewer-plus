@@ -98,12 +98,20 @@ export class PreviewFloatingView extends WorkspaceView {
     const startPanX = this.panX
     const startPanY = this.panY
 
+    let rafId: number | undefined
+
     const onMove = (ev: MouseEvent) => {
       this.panX = startPanX + (ev.clientX - startX) / this.scale
       this.panY = startPanY + (ev.clientY - startY) / this.scale
-      contentEl.style.transform = `scale(${this.scale}) translate(${this.panX}px, ${this.panY}px)`
+      if (rafId === undefined) {
+        rafId = requestAnimationFrame(() => {
+          contentEl.style.transform = `scale(${this.scale}) translate(${this.panX}px, ${this.panY}px)`
+          rafId = undefined
+        })
+      }
     }
     const onUp = () => {
+      if (rafId !== undefined) cancelAnimationFrame(rafId)
       document.removeEventListener('mousemove', onMove)
       document.removeEventListener('mouseup', onUp)
     }
