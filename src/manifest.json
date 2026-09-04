@@ -1,12 +1,12 @@
 {
-  "id": "your-github-username.example",
-  "name": "Example",
-  "description": "Example plugin for typora.",
+  "id": "typora-community-plugin.codeblock-previewer-plus",
+  "name": "Codeblock Previewer Plus",
+  "description": "Open rendered codeblock previews (e.g. Mermaid) in a floating window with zoom and drag.",
   "author": "author name",
-  "authorUrl": "https://github.com/your-github-username",
-  "repo": "your-github-username/typora-plugin-example",
+  "authorUrl": "https://github.com/plylrnsdy",
+  "repo": "typora-community-plugin/codeblock-previewer-plus",
   "version": "1.0.0",
   "minAppVersion": "1.5.0",
-  "minCoreVersion": "2.7.7",
+  "minCoreVersion": "2.10.14",
   "platforms": ["win32", "linux", "darwin"]
 }

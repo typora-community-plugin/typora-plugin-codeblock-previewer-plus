@@ -1,0 +1,5 @@
+allowBuilds:
+  '@parcel/watcher': false
+  esbuild: true
+minimumReleaseAgeExclude:
+  - '@typora-community-plugin/core@2.10.12 || 2.10.14'
