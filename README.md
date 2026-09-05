@@ -44,3 +44,5 @@ Provides a floating window viewer for code block render previews in [Typora](htt
 ## License
 
 MIT
+
+[core]: https://github.com/typora-community-plugin/typora-community-plugin

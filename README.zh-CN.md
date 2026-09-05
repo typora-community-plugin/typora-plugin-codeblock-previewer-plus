@@ -44,3 +44,5 @@
 ## 许可证
 
 MIT
+
+[core]: https://github.com/typora-community-plugin/typora-community-plugin
