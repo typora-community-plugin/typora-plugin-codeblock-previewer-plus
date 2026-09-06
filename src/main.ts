@@ -38,7 +38,6 @@ class PreviewButtonProcessor extends CodeblockPostProcessor {
     this.button = {
       text: '<i class="fa fa-external-link"></i>',
       title: 'Open preview in floating window',
-      className: 'cbp-float-btn',
       onclick: (event) => {
         const codeblock = event.target.closest('pre') as HTMLElement | null
         if (!codeblock) return
