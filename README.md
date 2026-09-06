@@ -32,9 +32,13 @@ Provides a floating window viewer for code block render previews in [Typora](htt
 
 ## Supported Languages
 
-| Language  | Description                |
-| --------- | -------------------------- |
-| `mermaid` | Mermaid flowcharts/diagrams |
+Supports the following languages by default (customizable in plugin settings):
+
+| Language     | Description                  |
+| ------------ | ---------------------------- |
+| `mermaid`    | Mermaid flowcharts/diagrams  |
+| `flow`       | Flowcharts                   |
+| `sequence`   | Sequence diagrams            |
 
 ## Installation
 
