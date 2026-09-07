@@ -7,7 +7,7 @@ Provides a floating window viewer for code block render previews in [Typora](htt
 ## Features
 
 - **Floating Preview** — Displays an "Open Floating Window" button on rendered Mermaid code blocks; click to view in a new floating window
-- **Fullscreen Mode** — Optional fullscreen viewer: a dark mask with a centered square container holding the preview; wheel to zoom, drag to pan, click the mask (or press Esc) to close. No buttons
+- **Fullscreen Mode** — Optional fullscreen viewing: scroll wheel to zoom, drag to pan, click overlay (or press Esc) to close
 - **Zoom Controls** — Toolbar at the bottom-right of the floating window provides zoom in/out/reset buttons, with mouse wheel zoom support (range 10% - 500%)
 - **Drag to Pan** — Hold left mouse button and drag inside the floating window to pan content
 - **Resizable Window** — The floating window supports drag-to-resize
@@ -20,13 +20,13 @@ Provides a floating window viewer for code block render previews in [Typora](htt
 
 1. Write a Mermaid code block in your Typora document, for example:
 
-   ````markdown
-   ```mermaid
-   graph TD
-       A --> B
-       B --> C
-   ```
-   ````
+    ````markdown
+    ```mermaid
+    graph TD
+        A --> B
+        B --> C
+    ```
+    ````
 
 2. Typora will render the preview below the code block, with an "Open Floating Window" button (external link icon) in the top-right corner
 3. Click the button to view the rendered diagram in a standalone floating window, with zoom and drag support
@@ -43,12 +43,12 @@ Supports the following languages by default (customizable in plugin settings):
 
 ## Settings
 
-| Setting             | Description                                                                                     | Default           |
-| ------------------- | ----------------------------------------------------------------------------------------------- | ----------------- |
-| `LANGS`             | Comma-separated codeblock languages that get the preview button                                 | `flow,mermaid,sequence` |
-| `MODE`              | Which viewer the preview button opens: floating window or fullscreen overlay                    | Floating window   |
-| `FLOATING_WIDTH`    | Initial width of the floating window (% of viewport width)                                      | 45                |
-| `FLOATING_HEIGHT`   | Initial height of the floating window (% of viewport height)                                    | 60                |
+| Setting             | Description                                                                  | Default           |
+| ------------------- | ---------------------------------------------------------------------------- | ----------------- |
+| `LANGS`             | Comma-separated codeblock languages that get the preview button              | `flow,mermaid,sequence` |
+| `MODE`              | Which viewer the preview button opens: floating window or fullscreen overlay | Floating window   |
+| `FLOATING_WIDTH`    | Initial width of the floating window (% of viewport width)                   | 45                |
+| `FLOATING_HEIGHT`   | Initial height of the floating window (% of viewport height)                 | 60                |
 
 ## Installation
 
