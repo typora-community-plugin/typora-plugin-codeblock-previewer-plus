@@ -39,6 +39,11 @@ export class PreviewFloatingView extends WorkspaceView {
   private scale = 1
   private panX = 0
   private panY = 0
+  /** Offset of the SVG inside the content element (untransformed, at scale 1). */
+  private naturalW = 0
+  private naturalH = 0
+  private svgOffsetX = 0
+  private svgOffsetY = 0
 
   constructor(leaf: WorkspaceLeaf) {
     super(leaf)
@@ -69,10 +74,7 @@ export class PreviewFloatingView extends WorkspaceView {
       ;(this.containerEl.querySelector('.cbp-float__reset') as HTMLElement).title = i18n.resetZoom
     }
 
-    this.scale = 1
-    this.panX = 0
-    this.panY = 0
-    this.applyTransform()
+    requestAnimationFrame(() => this.fitContent())
 
     this.registerDomEvent(this.containerEl.querySelector('.cbp-float__body')!, 'mousedown', (e: MouseEvent) => {
       if ((e.target as HTMLElement).closest('.cbp-btn')) return
@@ -92,15 +94,54 @@ export class PreviewFloatingView extends WorkspaceView {
     this.registerDomEvent(this.containerEl.querySelector('.cbp-float__zoom-in')!, 'click', () => this.setZoom(this.scale + STEP))
     this.registerDomEvent(this.containerEl.querySelector('.cbp-float__zoom-out')!, 'click', () => this.setZoom(this.scale - STEP))
     this.registerDomEvent(this.containerEl.querySelector('.cbp-float__reset')!, 'click', () => {
-      this.panX = 0
-      this.panY = 0
-      this.setZoom(1)
+      this.fitContent()
     })
   }
 
   /** @override */
   onunload(): void {
     this.containerEl.remove()
+  }
+
+  /** Measure the SVG at scale 1, then fit and center it inside the body. */
+  private fitContent(): void {
+    const bodyEl = this.containerEl.querySelector('.cbp-float__body') as HTMLElement
+    const contentEl = this.containerEl.querySelector('.cbp-float__content') as HTMLElement
+    if (!bodyEl || !contentEl) return
+
+    // Reset the transform so the SVG is measured at its natural size.
+    contentEl.style.transform = 'none'
+    void contentEl.offsetWidth
+
+    const contentRect = contentEl.getBoundingClientRect()
+    const svg = contentEl.querySelector('svg') as SVGSVGElement | null
+    const svgRect = svg ? svg.getBoundingClientRect() : null
+
+    if (svgRect && svgRect.width > 0 && svgRect.height > 0) {
+      this.naturalW = svgRect.width
+      this.naturalH = svgRect.height
+      // Offset of the SVG inside the untransformed content element.
+      this.svgOffsetX = svgRect.left - contentRect.left
+      this.svgOffsetY = svgRect.top - contentRect.top
+    } else {
+      this.naturalW = Math.max(contentEl.offsetWidth, 1)
+      this.naturalH = Math.max(contentEl.offsetHeight, 1)
+      this.svgOffsetX = 0
+      this.svgOffsetY = 0
+    }
+
+    const pad = 8
+    const availW = Math.max(bodyEl.clientWidth - pad * 2, 1)
+    const availH = Math.max(bodyEl.clientHeight - pad * 2, 1)
+    this.scale = clampScale(Math.min(availW / this.naturalW, availH / this.naturalH))
+
+    // With transform-origin top left, a content point p lands at
+    // origin + scale * (p + pan). Put the SVG's center on the body's center.
+    const centerX = this.svgOffsetX + this.naturalW / 2
+    const centerY = this.svgOffsetY + this.naturalH / 2
+    this.panX = availW / (2 * this.scale) - centerX
+    this.panY = availH / (2 * this.scale) - centerY
+    this.applyTransform()
   }
 
   private setZoom(scale: number): void {
