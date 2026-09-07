@@ -60,9 +60,6 @@ class SettingsTab extends SettingTab {
 
   constructor(private plugin: CodeblockPreviewerPlus) {
     super()
-  }
-
-  onshow(): void {
     this.render()
   }
 
