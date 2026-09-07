@@ -10,6 +10,5 @@
   "floatingWidthName": "初始宽度 (FLOATING_WIDTH)",
   "floatingWidthDescription": "浮动预览窗口的初始宽度（占视口宽度的百分比，默认 45）",
   "floatingHeightName": "初始高度 (FLOATING_HEIGHT)",
-  "floatingHeightDescription": "浮动预览窗口的初始高度（占视口高度的百分比，默认 60）",
-  "applyAndReload": "应用并重新加载"
+  "floatingHeightDescription": "浮动预览窗口的初始高度（占视口高度的百分比，默认 60）"
 }

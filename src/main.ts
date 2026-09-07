@@ -27,17 +27,20 @@ export default class CodeblockPreviewerPlus extends Plugin<Partial<PluginSetting
     this.register(
       app.viewManager.registerView(PreviewFloatingView.type, (leaf) => new PreviewFloatingView(leaf)))
 
-    const settings = new PluginSettings(this.app, this.manifest, { version: 1 })
+    const settings = new PluginSettings<PluginSettingsData>(this.app, this.manifest, { version: 1 })
     settings.setDefault(DEFAULT_SETTINGS)
     this.registerSettings(settings)
 
     this.registerSettingTab(new SettingsTab(this))
 
-    this.registerMarkdownPostProcessor(new PreviewButtonProcessor(() => ({
-      langs: (this.settings?.get('langs') as string[]) || DEFAULT_SETTINGS.langs!,
-      floatingWidth: (this.settings?.get('floatingWidth') as number) ?? DEFAULT_SETTINGS.floatingWidth!,
-      floatingHeight: (this.settings?.get('floatingHeight') as number) ?? DEFAULT_SETTINGS.floatingHeight!,
-    }), this.i18n))
+    const processor = new PreviewButtonProcessor(settings, this.i18n)
+
+    this.registerMarkdownPostProcessor(processor)
+
+    this.register(
+      settings.addChangeListener('langs', (_key, value) => {
+        processor.lang = [...(value as string[])]
+      }))
   }
 }
 
@@ -46,12 +49,13 @@ interface PostProcessorContextLike {
 }
 
 class PreviewButtonProcessor extends CodeblockPostProcessor {
+
   constructor(
-    private getData: () => { langs: string[]; floatingWidth: number; floatingHeight: number },
+    settings: PluginSettings<PluginSettingsData>,
     i18n: I18n<typeof Locale>,
   ) {
     super()
-    this.lang = [...this.getData().langs]
+    this.lang = [...settings.get('langs')]
     this.button = {
       text: '<i class="fa fa-external-link"></i>',
       title: i18n.t.previewButtonTitle,
@@ -59,7 +63,7 @@ class PreviewButtonProcessor extends CodeblockPostProcessor {
         const codeblock = event.target.closest('pre') as HTMLElement | null
         if (!codeblock) return
         const panel = codeblock.querySelector('.md-diagram-panel-preview')
-        if (panel) openPreviewFloatingWindow(panel.innerHTML, this.getData().floatingWidth, this.getData().floatingHeight, i18n.t)
+        if (panel) openPreviewFloatingWindow(panel.innerHTML, settings.get('floatingWidth'), settings.get('floatingHeight'), i18n.t)
       },
     }
   }
@@ -70,7 +74,6 @@ class PreviewButtonProcessor extends CodeblockPostProcessor {
 }
 
 class SettingsTab extends SettingTab {
-  i18n!: I18n<typeof Locale>
 
   get name(): string {
     return 'Codeblock Previewer Plus'
@@ -121,15 +124,6 @@ class SettingsTab extends SettingTab {
         input.onchange = () => {
           const value = parseFloat(input.value)
           if (!isNaN(value) && value > 0 && value <= 100) settings.set('floatingHeight', value)
-        }
-      })
-    })
-
-    this.addSetting((setting: SettingItem) => {
-      setting.addButton((button: HTMLButtonElement) => {
-        button.textContent = t.applyAndReload
-        button.onclick = () => {
-          location.reload()
         }
       })
     })

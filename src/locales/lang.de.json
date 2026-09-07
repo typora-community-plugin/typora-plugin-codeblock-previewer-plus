@@ -10,6 +10,5 @@
   "floatingWidthName": "STARTBREITE",
   "floatingWidthDescription": "Anfangsbreite des schwebenden Vorschau-Fensters (in % der Ansichtsbreite, Standard: 45)",
   "floatingHeightName": "STARTHÖHE",
-  "floatingHeightDescription": "Anfangshöhe des schwebenden Vorschau-Fensters (in % der Ansichthöhe, Standard: 60)",
-  "applyAndReload": "Übernehmen & neu laden"
+  "floatingHeightDescription": "Anfangshöhe des schwebenden Vorschau-Fensters (in % der Ansichthöhe, Standard: 60)"
 }
