@@ -2,6 +2,8 @@ import { app, html, WorkspaceLeaf, WorkspaceView } from '@typora-community-plugi
 
 export interface PreviewFloatingViewState {
   html: string
+  width?: number
+  height?: number
 }
 
 const STEP = 0.1
@@ -43,6 +45,16 @@ export class PreviewFloatingView extends WorkspaceView {
 
     const contentEl = this.containerEl.querySelector('.cbp-float__content') as HTMLElement
     const state = (this.leaf.state ?? {}) as PreviewFloatingViewState
+    const width = state.width
+    if (width && width > 0 && width <= 100) {
+      this.containerEl.style.width = `${width}vw`
+      this.containerEl.style.left = `calc(50% - ${width / 2}vw)`
+    }
+    const height = state.height
+    if (height && height > 0 && height <= 100) {
+      this.containerEl.style.height = `${height}vh`
+      this.containerEl.style.top = `calc(50% - ${height / 2}vh)`
+    }
     contentEl.innerHTML = state.html ?? ''
 
     this.scale = 1
@@ -125,7 +137,7 @@ let ID = 0
 /**
  * Open a floating preview window with the given rendered content.
  */
-export function openPreviewFloatingWindow(htmlContent: string): void {
+export function openPreviewFloatingWindow(htmlContent: string, width?: number, height?: number): void {
   const leaf = app.workspace.createLeaf({
     type: PreviewFloatingView.type,
     state: {
@@ -135,6 +147,8 @@ export function openPreviewFloatingWindow(htmlContent: string): void {
       draggable: true,
       onClose: () => leaf.detach(),
       html: htmlContent,
+      width,
+      height,
     },
   })
   app.commands.run('core.workspace.floating-split:open-leaf', [leaf])

@@ -5,10 +5,14 @@ import { PreviewFloatingView, openPreviewFloatingWindow } from './floating-view'
 
 interface PluginSettingsData {
   langs: string[]
+  floatingWidth: number
+  floatingHeight: number
 }
 
 const DEFAULT_SETTINGS: Partial<PluginSettingsData> = {
-  langs: ['flow', 'mermaid', 'sequence']
+  langs: ['flow', 'mermaid', 'sequence'],
+  floatingWidth: 45,
+  floatingHeight: 60,
 }
 
 export default class CodeblockPreviewerPlus extends Plugin<Partial<PluginSettingsData>> {
@@ -22,8 +26,11 @@ export default class CodeblockPreviewerPlus extends Plugin<Partial<PluginSetting
 
     this.registerSettingTab(new SettingsTab(this))
 
-    this.registerMarkdownPostProcessor(
-      new PreviewButtonProcessor(() => (this.settings?.get('langs') as string[]) || DEFAULT_SETTINGS.langs!))
+    this.registerMarkdownPostProcessor(new PreviewButtonProcessor(() => ({
+      langs: (this.settings?.get('langs') as string[]) || DEFAULT_SETTINGS.langs!,
+      floatingWidth: (this.settings?.get('floatingWidth') as number) ?? DEFAULT_SETTINGS.floatingWidth!,
+      floatingHeight: (this.settings?.get('floatingHeight') as number) ?? DEFAULT_SETTINGS.floatingHeight!,
+    })))
   }
 }
 
@@ -32,9 +39,9 @@ interface PostProcessorContextLike {
 }
 
 class PreviewButtonProcessor extends CodeblockPostProcessor {
-  constructor(private getLangs: () => string[]) {
+  constructor(private getData: () => { langs: string[]; floatingWidth: number; floatingHeight: number }) {
     super()
-    this.lang = [...this.getLangs()]
+    this.lang = [...this.getData().langs]
     this.button = {
       text: '<i class="fa fa-external-link"></i>',
       title: 'Open preview in floating window',
@@ -42,7 +49,7 @@ class PreviewButtonProcessor extends CodeblockPostProcessor {
         const codeblock = event.target.closest('pre') as HTMLElement | null
         if (!codeblock) return
         const panel = codeblock.querySelector('.md-diagram-panel-preview')
-        if (panel) openPreviewFloatingWindow(panel.innerHTML)
+        if (panel) openPreviewFloatingWindow(panel.innerHTML, this.getData().floatingWidth, this.getData().floatingHeight)
       },
     }
   }
@@ -76,6 +83,32 @@ class SettingsTab extends SettingTab {
         input.onchange = () => {
           const langs = input.value.split(',').map(s => s.trim()).filter(Boolean)
           settings.set('langs', langs)
+        }
+      })
+    })
+
+    this.addSettingTitle('Floating Preview Window')
+
+    this.addSetting((setting: SettingItem) => {
+      setting.addName('FLOATING_WIDTH')
+      setting.addDescription('Initial width (in % of viewport width) of the floating preview window (default 45)')
+      setting.addText((input: HTMLInputElement) => {
+        input.value = String(settings.get('floatingWidth'))
+        input.onchange = () => {
+          const value = parseFloat(input.value)
+          if (!isNaN(value) && value > 0 && value <= 100) settings.set('floatingWidth', value)
+        }
+      })
+    })
+
+    this.addSetting((setting: SettingItem) => {
+      setting.addName('FLOATING_HEIGHT')
+      setting.addDescription('Initial height (in % of viewport height) of the floating preview window (default 60)')
+      setting.addText((input: HTMLInputElement) => {
+        input.value = String(settings.get('floatingHeight'))
+        input.onchange = () => {
+          const value = parseFloat(input.value)
+          if (!isNaN(value) && value > 0 && value <= 100) settings.set('floatingHeight', value)
         }
       })
     })
