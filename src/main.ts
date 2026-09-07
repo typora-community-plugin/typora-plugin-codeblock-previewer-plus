@@ -1,19 +1,23 @@
 import './style.scss'
 import { app, Plugin, CodeblockPostProcessor, PluginSettings, SettingTab, SettingItem, I18n, path } from '@typora-community-plugin/core'
 import * as Locale from './locales/lang.en.json'
-import { PreviewFloatingView, openPreviewFloatingWindow } from './floating-view'
+import { PreviewFloatingView, openPreviewFloatingWindow, PreviewFullscreenView, openPreviewFullscreenWindow } from './floating-view'
+
+export type PreviewMode = 'floating-window' | 'fullscreen'
 
 
 interface PluginSettingsData {
   langs: string[]
   floatingWidth: number
   floatingHeight: number
+  previewMode: PreviewMode
 }
 
 const DEFAULT_SETTINGS: Partial<PluginSettingsData> = {
   langs: ['flow', 'mermaid', 'sequence'],
   floatingWidth: 45,
   floatingHeight: 60,
+  previewMode: 'floating-window',
 }
 
 export default class CodeblockPreviewerPlus extends Plugin<Partial<PluginSettingsData>> {
@@ -26,6 +30,9 @@ export default class CodeblockPreviewerPlus extends Plugin<Partial<PluginSetting
 
     this.register(
       app.viewManager.registerView(PreviewFloatingView.type, (leaf) => new PreviewFloatingView(leaf)))
+
+    this.register(
+      app.viewManager.registerView(PreviewFullscreenView.type, (leaf) => new PreviewFullscreenView(leaf)))
 
     const settings = new PluginSettings<PluginSettingsData>(this.app, this.manifest, { version: 1 })
     settings.setDefault(DEFAULT_SETTINGS)
@@ -63,7 +70,13 @@ class PreviewButtonProcessor extends CodeblockPostProcessor {
         const codeblock = event.target.closest('pre') as HTMLElement | null
         if (!codeblock) return
         const panel = codeblock.querySelector('.md-diagram-panel-preview')
-        if (panel) openPreviewFloatingWindow(panel.innerHTML, settings.get('floatingWidth'), settings.get('floatingHeight'), i18n.t)
+        if (!panel) return
+        const mode = settings.get('previewMode')
+        if (mode === 'fullscreen') {
+          openPreviewFullscreenWindow(panel.innerHTML, { closeHint: i18n.t.fullscreenCloseHint })
+        } else {
+          openPreviewFloatingWindow(panel.innerHTML, settings.get('floatingWidth'), settings.get('floatingHeight'), i18n.t)
+        }
       },
     }
   }
@@ -99,6 +112,21 @@ class SettingsTab extends SettingTab {
           const langs = input.value.split(',').map(s => s.trim()).filter(Boolean)
           settings.set('langs', langs)
         }
+      })
+    })
+
+    this.addSettingTitle(t.previewMode)
+
+    this.addSetting((setting: SettingItem) => {
+      setting.addName(t.previewModeName)
+      setting.addDescription(t.previewModeDescription)
+      setting.addSelect({
+        options: [t.modeFloatingWindow, t.modeFullscreen],
+        selected: settings.get('previewMode') === 'fullscreen' ? t.modeFullscreen : t.modeFloatingWindow,
+        onchange: (event) => {
+          const mode: PreviewMode = event.target.value === t.modeFullscreen ? 'fullscreen' : 'floating-window'
+          settings.set('previewMode', mode)
+        },
       })
     })
 
