@@ -1,0 +1,15 @@
+{
+  "previewButtonTitle": "Open preview in floating window",
+  "zoomOut": "Zoom out",
+  "zoomIn": "Zoom in",
+  "resetZoom": "Reset zoom",
+  "supportedLanguages": "Supported Languages",
+  "langsName": "LANGS",
+  "langsDescription": "Comma-separated list of codeblock languages to enable preview button for (e.g. flow,mermaid,sequence)",
+  "floatingPreviewWindow": "Floating Preview Window",
+  "floatingWidthName": "FLOATING_WIDTH",
+  "floatingWidthDescription": "Initial width (in % of viewport width) of the floating preview window (default 45)",
+  "floatingHeightName": "FLOATING_HEIGHT",
+  "floatingHeightDescription": "Initial height (in % of viewport height) of the floating preview window (default 60)",
+  "applyAndReload": "Apply & Reload"
+}

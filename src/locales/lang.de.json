@@ -1,0 +1,15 @@
+{
+  "previewButtonTitle": "Vorschau im schwebenden Fenster öffnen",
+  "zoomOut": "Verkleinern",
+  "zoomIn": "Vergrößern",
+  "resetZoom": "Zoom zurücksetzen",
+  "supportedLanguages": "Unterstützte Sprachen",
+  "langsName": "SPRACHEN",
+  "langsDescription": "Komma-getrennte Liste der Codeblock-Sprachen, für die der Vorschau-Button aktiviert werden soll (z. B. flow,mermaid,sequence)",
+  "floatingPreviewWindow": "Schwebendes Vorschau-Fenster",
+  "floatingWidthName": "STARTBREITE",
+  "floatingWidthDescription": "Anfangsbreite des schwebenden Vorschau-Fensters (in % der Ansichtsbreite, Standard: 45)",
+  "floatingHeightName": "STARTHÖHE",
+  "floatingHeightDescription": "Anfangshöhe des schwebenden Vorschau-Fensters (in % der Ansichthöhe, Standard: 60)",
+  "applyAndReload": "Übernehmen & neu laden"
+}

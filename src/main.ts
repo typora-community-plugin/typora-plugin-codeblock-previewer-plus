@@ -1,5 +1,6 @@
 import './style.scss'
-import { app, Plugin, CodeblockPostProcessor, PluginSettings, SettingTab, SettingItem } from '@typora-community-plugin/core'
+import { app, Plugin, CodeblockPostProcessor, PluginSettings, SettingTab, SettingItem, I18n, path } from '@typora-community-plugin/core'
+import * as Locale from './locales/lang.en.json'
 import { PreviewFloatingView, openPreviewFloatingWindow } from './floating-view'
 
 
@@ -16,7 +17,13 @@ const DEFAULT_SETTINGS: Partial<PluginSettingsData> = {
 }
 
 export default class CodeblockPreviewerPlus extends Plugin<Partial<PluginSettingsData>> {
+  i18n!: I18n<typeof Locale>
+
   onload(): void {
+    this.i18n = new I18n<typeof Locale>({
+      localePath: path.join(this.manifest.dir!, 'locales'),
+    })
+
     this.register(
       app.viewManager.registerView(PreviewFloatingView.type, (leaf) => new PreviewFloatingView(leaf)))
 
@@ -30,7 +37,7 @@ export default class CodeblockPreviewerPlus extends Plugin<Partial<PluginSetting
       langs: (this.settings?.get('langs') as string[]) || DEFAULT_SETTINGS.langs!,
       floatingWidth: (this.settings?.get('floatingWidth') as number) ?? DEFAULT_SETTINGS.floatingWidth!,
       floatingHeight: (this.settings?.get('floatingHeight') as number) ?? DEFAULT_SETTINGS.floatingHeight!,
-    })))
+    }), this.i18n))
   }
 }
 
@@ -39,17 +46,20 @@ interface PostProcessorContextLike {
 }
 
 class PreviewButtonProcessor extends CodeblockPostProcessor {
-  constructor(private getData: () => { langs: string[]; floatingWidth: number; floatingHeight: number }) {
+  constructor(
+    private getData: () => { langs: string[]; floatingWidth: number; floatingHeight: number },
+    i18n: I18n<typeof Locale>,
+  ) {
     super()
     this.lang = [...this.getData().langs]
     this.button = {
       text: '<i class="fa fa-external-link"></i>',
-      title: 'Open preview in floating window',
+      title: i18n.t.previewButtonTitle,
       onclick: (event) => {
         const codeblock = event.target.closest('pre') as HTMLElement | null
         if (!codeblock) return
         const panel = codeblock.querySelector('.md-diagram-panel-preview')
-        if (panel) openPreviewFloatingWindow(panel.innerHTML, this.getData().floatingWidth, this.getData().floatingHeight)
+        if (panel) openPreviewFloatingWindow(panel.innerHTML, this.getData().floatingWidth, this.getData().floatingHeight, i18n.t)
       },
     }
   }
@@ -60,6 +70,7 @@ class PreviewButtonProcessor extends CodeblockPostProcessor {
 }
 
 class SettingsTab extends SettingTab {
+  i18n!: I18n<typeof Locale>
 
   get name(): string {
     return 'Codeblock Previewer Plus'
@@ -71,13 +82,14 @@ class SettingsTab extends SettingTab {
   }
 
   render(): void {
+    const { t } = this.plugin.i18n
     const settings = this.plugin.settings as PluginSettings<PluginSettingsData>
 
-    this.addSettingTitle('Supported Languages')
+    this.addSettingTitle(t.supportedLanguages)
 
     this.addSetting((setting: SettingItem) => {
-      setting.addName('LANGS')
-      setting.addDescription('Comma-separated list of codeblock languages to enable preview button for (e.g. flow,mermaid,sequence)')
+      setting.addName(t.langsName)
+      setting.addDescription(t.langsDescription)
       setting.addText((input: HTMLInputElement) => {
         input.value = settings.get('langs').join(',')
         input.onchange = () => {
@@ -87,11 +99,11 @@ class SettingsTab extends SettingTab {
       })
     })
 
-    this.addSettingTitle('Floating Preview Window')
+    this.addSettingTitle(t.floatingPreviewWindow)
 
     this.addSetting((setting: SettingItem) => {
-      setting.addName('FLOATING_WIDTH')
-      setting.addDescription('Initial width (in % of viewport width) of the floating preview window (default 45)')
+      setting.addName(t.floatingWidthName)
+      setting.addDescription(t.floatingWidthDescription)
       setting.addText((input: HTMLInputElement) => {
         input.value = String(settings.get('floatingWidth'))
         input.onchange = () => {
@@ -102,8 +114,8 @@ class SettingsTab extends SettingTab {
     })
 
     this.addSetting((setting: SettingItem) => {
-      setting.addName('FLOATING_HEIGHT')
-      setting.addDescription('Initial height (in % of viewport height) of the floating preview window (default 60)')
+      setting.addName(t.floatingHeightName)
+      setting.addDescription(t.floatingHeightDescription)
       setting.addText((input: HTMLInputElement) => {
         input.value = String(settings.get('floatingHeight'))
         input.onchange = () => {
@@ -115,7 +127,7 @@ class SettingsTab extends SettingTab {
 
     this.addSetting((setting: SettingItem) => {
       setting.addButton((button: HTMLButtonElement) => {
-        button.textContent = 'Apply & Reload'
+        button.textContent = t.applyAndReload
         button.onclick = () => {
           location.reload()
         }

@@ -4,6 +4,11 @@ export interface PreviewFloatingViewState {
   html: string
   width?: number
   height?: number
+  i18n?: {
+    zoomOut: string
+    zoomIn: string
+    resetZoom: string
+  }
 }
 
 const STEP = 0.1
@@ -23,10 +28,10 @@ export class PreviewFloatingView extends WorkspaceView {
       <div class="cbp-float__body">
         <div class="cbp-float__content"></div>
         <div class="cbp-float__toolbar">
-          <button type="button" class="cbp-btn cbp-float__zoom-out" title="Zoom out"><i class="fa fa-minus"></i></button>
+          <button type="button" class="cbp-btn cbp-float__zoom-out"><i class="fa fa-minus"></i></button>
           <span class="cbp-float__scale">100%</span>
-          <button type="button" class="cbp-btn cbp-float__zoom-in" title="Zoom in"><i class="fa fa-plus"></i></button>
-          <button type="button" class="cbp-btn cbp-float__reset" title="Reset zoom"><i class="fa fa-expand"></i></button>
+          <button type="button" class="cbp-btn cbp-float__zoom-in"><i class="fa fa-plus"></i></button>
+          <button type="button" class="cbp-btn cbp-float__reset"><i class="fa fa-expand"></i></button>
         </div>
       </div>
     </div>`
@@ -56,6 +61,13 @@ export class PreviewFloatingView extends WorkspaceView {
       this.containerEl.style.top = `calc(50% - ${height / 2}vh)`
     }
     contentEl.innerHTML = state.html ?? ''
+
+    const i18n = state.i18n
+    if (i18n) {
+      ;(this.containerEl.querySelector('.cbp-float__zoom-out') as HTMLElement).title = i18n.zoomOut
+      ;(this.containerEl.querySelector('.cbp-float__zoom-in') as HTMLElement).title = i18n.zoomIn
+      ;(this.containerEl.querySelector('.cbp-float__reset') as HTMLElement).title = i18n.resetZoom
+    }
 
     this.scale = 1
     this.panX = 0
@@ -137,7 +149,12 @@ let ID = 0
 /**
  * Open a floating preview window with the given rendered content.
  */
-export function openPreviewFloatingWindow(htmlContent: string, width?: number, height?: number): void {
+export function openPreviewFloatingWindow(
+  htmlContent: string,
+  width?: number,
+  height?: number,
+  i18n?: PreviewFloatingViewState['i18n'],
+): void {
   const leaf = app.workspace.createLeaf({
     type: PreviewFloatingView.type,
     state: {
@@ -149,6 +166,7 @@ export function openPreviewFloatingWindow(htmlContent: string, width?: number, h
       html: htmlContent,
       width,
       height,
+      i18n,
     },
   })
   app.commands.run('core.workspace.floating-split:open-leaf', [leaf])

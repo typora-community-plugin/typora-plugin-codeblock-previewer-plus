@@ -1,0 +1,15 @@
+{
+  "previewButtonTitle": "在浮动窗口中打开预览",
+  "zoomOut": "缩小",
+  "zoomIn": "放大",
+  "resetZoom": "重置缩放",
+  "supportedLanguages": "支持的语言",
+  "langsName": "语言列表 (LANGS)",
+  "langsDescription": "以逗号分隔的代码块语言列表，用于启用预览按钮（例如 flow,mermaid,sequence）",
+  "floatingPreviewWindow": "浮动预览窗口",
+  "floatingWidthName": "初始宽度 (FLOATING_WIDTH)",
+  "floatingWidthDescription": "浮动预览窗口的初始宽度（占视口宽度的百分比，默认 45）",
+  "floatingHeightName": "初始高度 (FLOATING_HEIGHT)",
+  "floatingHeightDescription": "浮动预览窗口的初始高度（占视口高度的百分比，默认 60）",
+  "applyAndReload": "应用并重新加载"
+}
