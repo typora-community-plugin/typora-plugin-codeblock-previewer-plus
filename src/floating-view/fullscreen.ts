@@ -114,38 +114,32 @@ export class PreviewFullscreenView extends WorkspaceView {
     setTimeout(() => leaf.detach(), 0)
   }
 
-  /** Measure the SVG at scale 1 and fit it inside the viewport. */
+  /** Measure the box at scale 1 and fit it inside the viewport. */
   private fitContent(): void {
     const boxEl = this.containerEl.querySelector('.cbp-fullscreen__box') as HTMLElement
     const contentEl = this.containerEl.querySelector('.cbp-fullscreen__content') as HTMLElement
     if (!boxEl || !contentEl) return
 
-    // Reset the transform so the content is measured at its natural size.
+    // Reset the transform so the box is measured at its natural size.
     boxEl.style.transform = 'none'
     void boxEl.offsetWidth
 
+    // Size the box to exactly match the SVG's aspect ratio.
     const svg = contentEl.querySelector('svg') as SVGSVGElement | null
-    let naturalW: number
-    let naturalH: number
-    if (svg) {
-      const vb = svg.viewBox.baseVal
-      const rect = svg.getBoundingClientRect()
-      if (vb.width > 0 && vb.height > 0) {
-        // Size the box to exactly match the SVG's aspect ratio.
-        boxEl.style.aspectRatio = `${vb.width} / ${vb.height}`
-        naturalW = vb.width
-        naturalH = vb.height
-      } else {
-        naturalW = rect.width || boxEl.clientWidth
-        naturalH = rect.height || boxEl.clientHeight
-      }
-    } else {
-      const rect = contentEl.getBoundingClientRect()
-      naturalW = rect.width || boxEl.clientWidth
-      naturalH = rect.height || boxEl.clientHeight
+    const vb = svg?.viewBox.baseVal
+    if (vb && vb.width > 0 && vb.height > 0) {
+      boxEl.style.aspectRatio = `${vb.width} / ${vb.height}`
+      void boxEl.offsetWidth
     }
 
-    // Fit the SVG inside the viewport, keeping a margin on all sides.
+    // Measure the box's *rendered* size, after CSS constraints (e.g.
+    // max-width) have been applied. Using the SVG's viewBox size here instead
+    // would double-apply the CSS shrink and make large SVGs display tiny.
+    const naturalW = boxEl.getBoundingClientRect().width || boxEl.clientWidth
+    const naturalH = boxEl.getBoundingClientRect().height || boxEl.clientHeight
+    if (naturalW <= 0 || naturalH <= 0) return
+
+    // Fit the box inside the viewport, keeping a margin on all sides.
     const targetW = window.innerWidth - 64
     const targetH = window.innerHeight - 64
     if (targetW <= 0 || targetH <= 0) return
