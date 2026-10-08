@@ -16,5 +16,14 @@
   "floatingWidthName": "初始宽度 (FLOATING_WIDTH)",
   "floatingWidthDescription": "浮动预览窗口的初始宽度（占视口宽度的百分比，默认 45）",
   "floatingHeightName": "初始高度 (FLOATING_HEIGHT)",
-  "floatingHeightDescription": "浮动预览窗口的初始高度（占视口高度的百分比，默认 60）"
+  "floatingHeightDescription": "浮动预览窗口的初始高度（占视口高度的百分比，默认 60）",
+  "zoomScale": "缩放范围",
+  "minScaleName": "最小缩放 (MIN_SCALE %)",
+  "minScaleDescription": "最小缩放比例，占原始尺寸的百分比（默认 10）",
+  "maxScaleName": "最大缩放 (MAX_SCALE %)",
+  "maxScaleDescription": "最大缩放比例，占原始尺寸的百分比（默认 2000）",
+  "widthRangeError": "宽度必须是 0 到 100 之间的数字。",
+  "heightRangeError": "高度必须是 0 到 100 之间的数字。",
+  "minScaleRangeError": "最小缩放必须是正数，且不大于最大缩放。",
+  "maxScaleRangeError": "最大缩放必须是正数，且不小于最小缩放。"
 }

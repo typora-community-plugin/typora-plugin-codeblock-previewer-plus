@@ -1,9 +1,12 @@
 import { app, html, WorkspaceLeaf, WorkspaceView } from '@typora-community-plugin/core'
+import { clampScale, DEFAULT_MAX_SCALE, DEFAULT_MIN_SCALE } from './scale'
 
 export interface PreviewFloatingViewState {
   html: string
   width?: number
   height?: number
+  minScale?: number
+  maxScale?: number
   i18n?: {
     zoomOut: string
     zoomIn: string
@@ -12,13 +15,6 @@ export interface PreviewFloatingViewState {
 }
 
 const STEP = 0.1
-
-const MIN_SCALE = 0.1
-const MAX_SCALE = 5
-
-function clampScale(scale: number): number {
-  return Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale))
-}
 
 export class PreviewFloatingView extends WorkspaceView {
   static type = 'codeblock-previewer-plus.floating-preview'
@@ -37,6 +33,8 @@ export class PreviewFloatingView extends WorkspaceView {
     </div>`
 
   private scale = 1
+  private minScale = DEFAULT_MIN_SCALE
+  private maxScale = DEFAULT_MAX_SCALE
   private panX = 0
   private panY = 0
   /** Offset of the SVG inside the content element (untransformed, at scale 1). */
@@ -55,6 +53,8 @@ export class PreviewFloatingView extends WorkspaceView {
 
     const contentEl = this.containerEl.querySelector('.cbp-float__content') as HTMLElement
     const state = (this.leaf.state ?? {}) as PreviewFloatingViewState
+    if (state.minScale !== undefined) this.minScale = state.minScale
+    if (state.maxScale !== undefined) this.maxScale = state.maxScale
     const width = state.width
     if (width && width > 0 && width <= 100) {
       this.containerEl.style.width = `${width}vw`
@@ -133,7 +133,7 @@ export class PreviewFloatingView extends WorkspaceView {
     const pad = 8
     const availW = Math.max(bodyEl.clientWidth - pad * 2, 1)
     const availH = Math.max(bodyEl.clientHeight - pad * 2, 1)
-    this.scale = clampScale(Math.min(availW / this.naturalW, availH / this.naturalH))
+    this.scale = clampScale(Math.min(availW / this.naturalW, availH / this.naturalH), this.minScale, this.maxScale)
 
     // With transform-origin top left, a content point p lands at
     // origin + scale * (p + pan). Put the SVG's center on the body's center.
@@ -145,7 +145,7 @@ export class PreviewFloatingView extends WorkspaceView {
   }
 
   private setZoom(scale: number): void {
-    this.scale = clampScale(scale)
+    this.scale = clampScale(scale, this.minScale, this.maxScale)
     this.applyTransform()
   }
 
@@ -195,6 +195,7 @@ export function openPreviewFloatingWindow(
   width?: number,
   height?: number,
   i18n?: PreviewFloatingViewState['i18n'],
+  scale?: { min?: number; max?: number },
 ): void {
   const leaf = app.workspace.createLeaf({
     type: PreviewFloatingView.type,
@@ -207,6 +208,8 @@ export function openPreviewFloatingWindow(
       html: htmlContent,
       width,
       height,
+      minScale: scale?.min,
+      maxScale: scale?.max,
       i18n,
     },
   })

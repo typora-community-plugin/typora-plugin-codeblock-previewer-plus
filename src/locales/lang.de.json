@@ -16,5 +16,14 @@
   "floatingWidthName": "STARTBREITE",
   "floatingWidthDescription": "Anfangsbreite des schwebenden Vorschau-Fensters (in % der Ansichtsbreite, Standard: 45)",
   "floatingHeightName": "STARTHÖHE",
-  "floatingHeightDescription": "Anfangshöhe des schwebenden Vorschau-Fensters (in % der Ansichthöhe, Standard: 60)"
+  "floatingHeightDescription": "Anfangshöhe des schwebenden Vorschau-Fensters (in % der Ansichthöhe, Standard: 60)",
+  "zoomScale": "Zoom-Skalierung",
+  "minScaleName": "MIN_SKALA (%)",
+  "minScaleDescription": "Kleinste Zoomstufe in Prozent der Originalgröße (Standard: 10)",
+  "maxScaleName": "MAX_SKALA (%)",
+  "maxScaleDescription": "Größte Zoomstufe in Prozent der Originalgröße (Standard: 2000)",
+  "widthRangeError": "Die Breite muss eine Zahl zwischen 0 und 100 sein.",
+  "heightRangeError": "Die Höhe muss eine Zahl zwischen 0 und 100 sein.",
+  "minScaleRangeError": "MIN_SKALA muss eine positive Zahl sein, die nicht größer als MAX_SKALA ist.",
+  "maxScaleRangeError": "MAX_SKALA muss eine positive Zahl sein, die nicht kleiner als MIN_SKALA ist."
 }

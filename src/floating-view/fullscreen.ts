@@ -1,20 +1,16 @@
 import { app, html, WorkspaceLeaf, WorkspaceView } from '@typora-community-plugin/core'
+import { clampScale, DEFAULT_MAX_SCALE, DEFAULT_MIN_SCALE } from './scale'
 
 export interface PreviewFullscreenViewState {
   html: string
+  minScale?: number
+  maxScale?: number
   i18n?: {
     closeHint: string
   }
 }
 
 const STEP = 0.1
-
-const MIN_SCALE = 0.1
-const MAX_SCALE = 20
-
-function clampScale(scale: number): number {
-  return Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale))
-}
 
 /**
  * Fullscreen preview mode.
@@ -34,6 +30,8 @@ export class PreviewFullscreenView extends WorkspaceView {
     </div>`
 
   private scale = 1
+  private minScale = DEFAULT_MIN_SCALE
+  private maxScale = DEFAULT_MAX_SCALE
   private panX = 0
   private panY = 0
 
@@ -47,6 +45,8 @@ export class PreviewFullscreenView extends WorkspaceView {
 
     const contentEl = this.containerEl.querySelector('.cbp-fullscreen__content') as HTMLElement
     const state = (this.leaf.state ?? {}) as PreviewFullscreenViewState
+    if (state.minScale !== undefined) this.minScale = state.minScale
+    if (state.maxScale !== undefined) this.maxScale = state.maxScale
     contentEl.innerHTML = state.html ?? ''
 
     if (state.i18n?.closeHint) {
@@ -144,14 +144,14 @@ export class PreviewFullscreenView extends WorkspaceView {
     const targetH = window.innerHeight - 64
     if (targetW <= 0 || targetH <= 0) return
 
-    this.scale = clampScale(Math.min(targetW / naturalW, targetH / naturalH))
+    this.scale = clampScale(Math.min(targetW / naturalW, targetH / naturalH), this.minScale, this.maxScale)
     this.panX = 0
     this.panY = 0
     this.applyTransform()
   }
 
   private setZoom(next: number, originX?: number, originY?: number): void {
-    const clamped = clampScale(next)
+    const clamped = clampScale(next, this.minScale, this.maxScale)
     if (clamped === this.scale && originX === undefined) return
 
     // Zoom around the mouse position when provided.
@@ -211,12 +211,15 @@ let ID = 0
 export function openPreviewFullscreenWindow(
   htmlContent: string,
   i18n?: PreviewFullscreenViewState['i18n'],
+  scale?: { min?: number; max?: number },
 ): void {
   const leaf = app.workspace.createLeaf({
     type: PreviewFullscreenView.type,
     state: {
       path: `typ://${PreviewFullscreenView.type}/${++ID}/Previewer`,
       html: htmlContent,
+      minScale: scale?.min,
+      maxScale: scale?.max,
       i18n,
     },
   })

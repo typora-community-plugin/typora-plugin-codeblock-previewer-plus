@@ -16,5 +16,14 @@
   "floatingWidthName": "FLOATING_WIDTH",
   "floatingWidthDescription": "Initial width (in % of viewport width) of the floating preview window (default 45)",
   "floatingHeightName": "FLOATING_HEIGHT",
-  "floatingHeightDescription": "Initial height (in % of viewport height) of the floating preview window (default 60)"
+  "floatingHeightDescription": "Initial height (in % of viewport height) of the floating preview window (default 60)",
+  "zoomScale": "Zoom Scale",
+  "minScaleName": "MIN_SCALE (%)",
+  "minScaleDescription": "Smallest zoom level, in percent of the natural size (default 10)",
+  "maxScaleName": "MAX_SCALE (%)",
+  "maxScaleDescription": "Largest zoom level, in percent of the natural size (default 2000)",
+  "widthRangeError": "Width must be a number between 0 and 100.",
+  "heightRangeError": "Height must be a number between 0 and 100.",
+  "minScaleRangeError": "MIN_SCALE must be a positive number no greater than MAX_SCALE.",
+  "maxScaleRangeError": "MAX_SCALE must be a positive number no less than MIN_SCALE."
 }

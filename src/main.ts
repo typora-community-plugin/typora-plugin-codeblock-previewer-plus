@@ -3,6 +3,7 @@ import { app, Plugin, CodeblockPostProcessor, PluginSettings, I18n, path } from 
 import * as Locale from './locales/lang.en.json'
 import { PreviewFloatingView, openPreviewFloatingWindow } from './floating-view/windows'
 import { PreviewFullscreenView, openPreviewFullscreenWindow } from './floating-view/fullscreen'
+import { DEFAULT_MAX_SCALE, DEFAULT_MIN_SCALE } from './floating-view/scale'
 import { SettingsTab } from './settings-tab'
 
 export type PreviewMode = 'floating-window' | 'fullscreen'
@@ -13,6 +14,8 @@ export interface PluginSettingsData {
   floatingWidth: number
   floatingHeight: number
   previewMode: PreviewMode
+  minScale: number
+  maxScale: number
 }
 
 const DEFAULT_SETTINGS: Partial<PluginSettingsData> = {
@@ -20,6 +23,8 @@ const DEFAULT_SETTINGS: Partial<PluginSettingsData> = {
   floatingWidth: 45,
   floatingHeight: 60,
   previewMode: 'floating-window',
+  minScale: DEFAULT_MIN_SCALE * 100,
+  maxScale: DEFAULT_MAX_SCALE * 100,
 }
 
 export default class CodeblockPreviewerPlus extends Plugin<Partial<PluginSettingsData>> {
@@ -74,10 +79,11 @@ class PreviewButtonProcessor extends CodeblockPostProcessor {
         const panel = codeblock.querySelector('.md-diagram-panel-preview')
         if (!panel) return
         const mode = settings.get('previewMode')
+        const scale = { min: settings.get('minScale') / 100, max: settings.get('maxScale') / 100 }
         if (mode === 'fullscreen') {
-          openPreviewFullscreenWindow(panel.innerHTML, { closeHint: i18n.t.fullscreenCloseHint })
+          openPreviewFullscreenWindow(panel.innerHTML, { closeHint: i18n.t.fullscreenCloseHint }, scale)
         } else {
-          openPreviewFloatingWindow(panel.innerHTML, settings.get('floatingWidth'), settings.get('floatingHeight'), i18n.t)
+          openPreviewFloatingWindow(panel.innerHTML, settings.get('floatingWidth'), settings.get('floatingHeight'), i18n.t, scale)
         }
       },
     }
