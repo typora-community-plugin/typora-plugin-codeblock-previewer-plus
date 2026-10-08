@@ -8,7 +8,7 @@ Provides a floating window viewer for code block render previews in [Typora](htt
 
 - **Floating Preview** — Displays an "Open Floating Window" button on rendered Mermaid code blocks; click to view in a new floating window
 - **Fullscreen Mode** — Optional fullscreen viewing: scroll wheel to zoom, drag to pan, click overlay (or press Esc) to close
-- **Zoom Controls** — Toolbar at the bottom-right of the floating window provides zoom in/out/reset buttons, with mouse wheel zoom support (range 10% - 500%)
+- **Zoom Controls** — Toolbar at the bottom-right of the floating window provides zoom in/out/reset buttons, with mouse wheel zoom support (configurable range, default 10% - 2000%)
 - **Drag to Pan** — Hold left mouse button and drag inside the floating window to pan content
 - **Resizable Window** — The floating window supports drag-to-resize
 
@@ -49,6 +49,8 @@ Supports the following languages by default (customizable in plugin settings):
 | `MODE`              | Which viewer the preview button opens: floating window or fullscreen overlay | Floating window   |
 | `FLOATING_WIDTH`    | Initial width of the floating window (% of viewport width)                   | 45                |
 | `FLOATING_HEIGHT`   | Initial height of the floating window (% of viewport height)                 | 60                |
+| `MIN_SCALE`         | Minimum zoom level (% of natural size), shared by both viewers               | 10                |
+| `MAX_SCALE`         | Maximum zoom level (% of natural size), shared by both viewers               | 2000              |
 
 ## Installation
 
