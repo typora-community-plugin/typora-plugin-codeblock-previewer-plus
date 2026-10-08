@@ -10,7 +10,7 @@ export interface PreviewFullscreenViewState {
 const STEP = 0.1
 
 const MIN_SCALE = 0.1
-const MAX_SCALE = 5
+const MAX_SCALE = 20
 
 function clampScale(scale: number): number {
   return Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale))
@@ -184,8 +184,8 @@ export class PreviewFullscreenView extends WorkspaceView {
     let rafId: number | undefined
 
     const onMove = (ev: MouseEvent) => {
-      this.panX = startPanX + (ev.clientX - startX) / this.scale
-      this.panY = startPanY + (ev.clientY - startY) / this.scale
+      this.panX = startPanX + (ev.clientX - startX)
+      this.panY = startPanY + (ev.clientY - startY)
       if (rafId === undefined) {
         rafId = requestAnimationFrame(() => {
           boxEl.style.transform = `translate(${this.panX}px, ${this.panY}px) scale(${this.scale})`
