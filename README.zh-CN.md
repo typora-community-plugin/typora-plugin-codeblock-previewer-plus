@@ -14,7 +14,9 @@
 
 ## 预览
 
-![](docs/assets/base.gif)
+| 浮动预览                   | 全屏模式                         |
+| ------------------------- | ------------------------------- |
+| ![](docs/assets/base.gif) | ![](docs/assets/fullscreen.gif) |
 
 ## 使用
 

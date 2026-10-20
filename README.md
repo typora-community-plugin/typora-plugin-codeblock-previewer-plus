@@ -14,7 +14,9 @@ Provides a floating window viewer for code block render previews in [Typora](htt
 
 ## Preview
 
-![](docs/assets/base.gif)
+| Floating Preview          | Fullscreen Mode                 |
+| ------------------------- | ------------------------------- |
+| ![](docs/assets/base.gif) | ![](docs/assets/fullscreen.gif) |
 
 ## Usage
 
